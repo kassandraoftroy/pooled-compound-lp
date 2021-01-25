@@ -5,11 +5,11 @@ pragma solidity 0.4.25;
  * @dev see https://github.com/ethereum/EIPs/issues/20
  */
 interface ICERC20 {
-    function mint(uint mintAmount) returns (uint);
-    function redeem(uint redeemTokens) returns (uint);
-    function redeemUnderlying(uint redeemAmount) returns (uint);
-    function borrow(uint borrowAmount) returns (uint);
-    function repayBorrow(uint repayAmount) returns (uint);
-    function balanceOfUnderlying(address account) view returns (uint);
-    function exchangeRateCurrent() view returns (uint);
+    function mint(uint mintAmount) external returns (uint);
+    function redeem(uint redeemTokens) external returns (uint);
+    function redeemUnderlying(uint redeemAmount) external returns (uint);
+    function borrow(uint borrowAmount) external returns (uint);
+    function repayBorrow(uint repayAmount) external returns (uint);
+    function balanceOfUnderlying(address account) external view returns (uint);
+    function exchangeRateCurrent() external view returns (uint);
 }
