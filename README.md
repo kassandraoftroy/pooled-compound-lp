@@ -9,8 +9,14 @@ The bonding curve chosen is a simple linear Bancor curve, but any other curve ca
 
 # usage
 
-clone repo
+`clone repo`
 
-yarn install
+`yarn install`
 
-npx hardhat test
+`touch .env`
+
+`vi .env`
+
+`ALCHEMY_ID=<your alchemy api key>` (add into .env file)
+
+`npx hardhat test`
