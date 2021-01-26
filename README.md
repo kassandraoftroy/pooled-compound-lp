@@ -3,7 +3,7 @@ Example of a continuous token bonded to DAI which is subsequently lent to Compou
 
 The continuous token implements the ERC20 interface i.e. it functions as any standard fungible token on ethereum. It may have arbitrary number of secondary markets but because it is bonded to DAI it always has guaranteed liquidity with that asset as well as automatic price discovery against it.
 
-In this example the interest accrued is only accesible by the token's 'owner' which can be a simple EOA (extrenally owned account) or it can be granted to any arbitrary Treasury smart contract where the spending of accrued interest (and changes of ownership) are governed over. 
+In this example the interest accrued is only accesible by the token's 'owner' which can be a simple EOA (externally owned account) or it can be granted to any arbitrary Treasury smart contract where the spending of accrued interest (and changes of ownership) may be governed over. 
 
 e.g. imagine a DAO where the token holders can vote on proposals that allocate the interest generated from the collateral to certain developers/projects/accounts by voting (or any other decentralized governance mechanisms). Token holders can still burn their tokens to redeem collateralized DAI at any time, cDAI is simply withdrawn from compound under the hood whenever any holder burns tokens for DAI. The idea here is that a community could use the interest to increase the demand/utility of their decentralized products.
 
