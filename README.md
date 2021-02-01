@@ -7,14 +7,14 @@ Another potential use case is to create a funding stream for projects without ri
 
 # test
 
-`clone repo`
+1. clone this repo
 
-`yarn install`
+2. `yarn install`
 
-`touch .env`
+3. `touch .env`
 
-`vi .env`
+4. `vi .env`
 
-`ALCHEMY_ID=<your alchemy api key>` (add into .env file)
+5. `ALCHEMY_ID=<your alchemy api key>` (add into .env file)
 
-`npx hardhat test`
+6. `npx hardhat test`
