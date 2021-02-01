@@ -2,20 +2,19 @@
 module.exports = async (hre) => {
     if (hre.network.name === "mainnet") {
       console.log(
-        "\n\n Deploying ContinuousTokenWithLending to mainnet. Hit ctrl + c to abort"
+        "\n\n Deploying PooledLPWithBorrowToken to mainnet. Hit ctrl + c to abort"
       );
-      console.log("❗ ContinuousTokenWithLending DEPLOYMENT: VERIFY");
+      console.log("❗ PooledLPWithBorrowToken DEPLOYMENT: VERIFY");
       await new Promise(r => setTimeout(r, 30000));
     }
     const { deployments } = hre;
     const { deploy } = deployments;
     const { deployer } = await hre.getNamedAccounts();
-  
-    await deploy("ContinuousTokenWithLending", {
+    await deploy("PooledLPWithBorrowToken", {
       from: deployer,
       args: [
-        "Continuous Token With Lending",
-        "CTWL",
+        "Providing DAI liquidity and hedging crypto on Compound",
+        "DAOTok",
         18,
         hre.ethers.utils.parseEther("100000"),
         hre.ethers.utils.parseEther("1000"),
@@ -26,4 +25,4 @@ module.exports = async (hre) => {
     });
 };
 
-module.exports.tags = ["ContinuousTokenWithLending"];
+module.exports.tags = ["PooledLPWithBorrowToken"];

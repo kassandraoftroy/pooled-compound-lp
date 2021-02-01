@@ -1,15 +1,14 @@
 pragma solidity 0.4.25;
 
 /**
- * @title ERC20 interface
- * @dev see https://github.com/ethereum/EIPs/issues/20
+ * @title CErc20 interface for Compound ERC20 assets
  */
 interface ICERC20 {
-    function mint(uint mintAmount) external returns (uint);
-    function redeem(uint redeemTokens) external returns (uint);
-    function redeemUnderlying(uint redeemAmount) external returns (uint);
-    function borrow(uint borrowAmount) external returns (uint);
-    function repayBorrow(uint repayAmount) external returns (uint);
-    function balanceOfUnderlying(address account) external view returns (uint);
-    function exchangeRateCurrent() external view returns (uint);
+    function mint(uint256 mintAmount) external returns (uint256);
+    function redeem(uint256 redeemTokens) external returns (uint256);
+    function redeemUnderlying(uint256 redeemAmount) external returns (uint256);
+    function borrow(uint256 borrowAmount) external returns (uint256);
+    function repayBorrow(uint256 repayAmount) external returns (uint256);
+    function balanceOfUnderlying(address account) external view returns (uint256);
+    function exchangeRateCurrent() external view returns (uint256);
 }
