@@ -85,6 +85,12 @@ module.exports = {
           optimizer: { enabled: process.env.DEBUG ? false : true },
         },
       },
+      {
+        version: "0.5.16",
+        settings: {
+          optimizer: { enabled: process.env.DEBUG ? false : true },
+        },
+      },
       // {
       //   version: "0.7.4",
       //   settings: {
