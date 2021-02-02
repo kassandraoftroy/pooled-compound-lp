@@ -6,16 +6,16 @@ import "./SafeMath.sol";
 contract GovernorAlpha {
     using SafeMath for uint;
 
-    /// @notice The name of this contract
     string public constant name = "DAO Governor Alpha";
 
-    /// @notice The maximum number of actions that can be included in a proposal
+    function minimumQuorum() public pure returns (uint) { return 1000000 ether; } // 1 million e18 tokens
+
+    function minimumThreshold() public pure returns (uint) { return 100000 ether; } // 100k e18 tokens
+
     function proposalMaxOperations() public pure returns (uint) { return 20; } // 20 actions
 
-    /// @notice The delay before voting on a proposal may take place, once proposed
     function votingDelay() public pure returns (uint) { return 1; } // 1 block
 
-    /// @notice The duration of voting on a proposal, in blocks
     function votingPeriod() public pure returns (uint) { return 40320; } // ~7 days in blocks (assuming 15s blocks)
 
     /// @notice The address of the DAO Protocol Timelock
@@ -208,11 +208,16 @@ contract GovernorAlpha {
         emit ProposalCanceled(proposalId);
     }
 
-    /// @notice The number of votes in support of a proposal required in order for a quorum to be reached and for a vote to succeed
-    function quorumVotes() public view returns (uint) { return token.totalSupply().mul(10).div(100); } // 10% of Uni
+    function quorumVotes() public view returns (uint) {
+        uint256 tenPercent = token.totalSupply().mul(10).div(100);
+        return tenPercent > minimumQuorum() ? tenPercent : minimumQuorum();
+    } // 10% of token with minimum floor
 
     /// @notice The number of votes required in order for a voter to become a proposer
-    function proposalThreshold() public view returns (uint) { return token.totalSupply().div(100); } // 1% of Uni
+    function proposalThreshold() public view returns (uint) { 
+        uint256 onePercent = token.totalSupply().div(100);
+        return onePercent > minimumThreshold() ? onePercent : minimumThreshold();
+    } // 1% of token with minimum floor
 
     function getActions(uint proposalId) public view returns (address[] memory targets, uint[] memory values, string[] memory signatures, bytes[] memory calldatas) {
         Proposal storage p = proposals[proposalId];
