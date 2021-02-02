@@ -1,18 +1,18 @@
 pragma solidity 0.4.25;
 
-import "./token/ContinuousToken.sol";
+import "./token/BondedGovToken.sol";
 import "./interfaces/ICERC20.sol";
 import "./interfaces/ICEther.sol";
 import "./interfaces/IWETH.sol";
 
-contract PooledLPWithBorrowToken is ContinuousToken {
+contract PooledLPWithBorrowToken is BondedGovToken {
     using SafeMath for uint256;
 
     address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address private constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address private constant CETH = 0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5;
 
-    ERC20 public reserveToken;
+    IERC20 public reserveToken;
     ICERC20 public cReserveToken;
     bool public activated;
     uint256 public totalDepositedReserve;
@@ -26,8 +26,8 @@ contract PooledLPWithBorrowToken is ContinuousToken {
         uint32 _reserveRatio,
         address _reserveTokenAddress,
         address _cReserveTokenAddress
-    ) public ContinuousToken(_name, _symbol, _decimals, _initialSupply, _reserveRatio) {
-        reserveToken = ERC20(_reserveTokenAddress);
+    ) public BondedGovToken(_name, _symbol, _decimals, _initialSupply, _reserveRatio) {
+        reserveToken = IERC20(_reserveTokenAddress);
         cReserveToken = ICERC20(_cReserveTokenAddress);
         totalDepositedReserve = _initialReserve;
     }
@@ -78,7 +78,7 @@ contract PooledLPWithBorrowToken is ContinuousToken {
             IWETH(WETH).deposit.value(_amount)();
             _tokenAddress = WETH;
         }
-        require(ERC20(_tokenAddress).transfer(msg.sender, _amount), "withdrawToken() withdraw amount is larger than token balance.");
+        require(IERC20(_tokenAddress).transfer(msg.sender, _amount), "withdrawToken() withdraw amount is larger than token balance.");
     }
 
     function borrowAsset(address _cTokenAddress, uint256 _amount) public onlyOwner {

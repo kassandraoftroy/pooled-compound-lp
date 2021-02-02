@@ -2,12 +2,12 @@ pragma solidity 0.4.25;
 
 import "../ownership/Ownable.sol";
 import "../math/SafeMath.sol";
-import "./ERC20.sol";
+import "./ERC20Gov.sol";
 import "./ERC20Detailed.sol";
 import "../curves/BancorBondingCurve.sol";
 
 
-contract ContinuousToken is Ownable, ERC20, ERC20Detailed, BancorBondingCurve {
+contract BondedGovToken is Ownable, ERC20Gov, ERC20Detailed, BancorBondingCurve {
     using SafeMath for uint;
 
     event Minted(address sender, uint amount, uint deposit);
