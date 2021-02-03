@@ -6,7 +6,7 @@ import "./SafeMath.sol";
 contract GovernorAlpha {
     using SafeMath for uint;
 
-    string public constant name = "DAO Governor Alpha";
+    string public name;
 
     function minimumQuorum() public pure returns (uint) { return 1000000 ether; } // 1 million e18 tokens
 
@@ -122,9 +122,14 @@ contract GovernorAlpha {
     /// @notice An event emitted when a proposal has been executed in the Timelock
     event ProposalExecuted(uint id);
 
-    constructor(address timelock_, address token_) public {
+    constructor(string memory name_, address timelock_, address token_) public {
         timelock = TimelockInterface(timelock_);
         token = TokenInterface(token_);
+        name = name_;
+    }
+
+    function acceptAdmin() public {
+        timelock.acceptAdmin();
     }
 
     function propose(address[] memory targets, uint[] memory values, string[] memory signatures, bytes[] memory calldatas, string memory description) public returns (uint) {
