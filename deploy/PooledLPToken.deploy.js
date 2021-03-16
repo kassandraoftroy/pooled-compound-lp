@@ -12,16 +12,22 @@ module.exports = async (hre) => {
     await deploy("PooledLPToken", {
       from: deployer,
       args: [
-        "Providing DAI liquidity on Compound",
-        "DAOTok",
+        "Breadchain DAI Staking Pool",
+        "BREAD",
         18,
-        hre.ethers.utils.parseEther("100000"),
-        hre.ethers.utils.parseEther("1000"),
-        500000,
+        hre.ethers.utils.parseEther("100"),
+        hre.ethers.utils.parseEther("100"),
+        1000000,
         hre.network.config.daiAddress,
         hre.network.config.cDaiAddress,
       ],
     });
+};
+
+module.exports.skip = async (hre) => {
+  const skip =
+    hre.network.name === "mainnet"
+  return skip ? true : false;
 };
 
 module.exports.tags = ["PooledLPToken"];

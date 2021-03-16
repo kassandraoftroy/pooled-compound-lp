@@ -1,21 +1,21 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.4.25;
 
-import "./token/BondedGovToken.sol";
-import "./interfaces/ICERC20.sol";
-import "./interfaces/ICEther.sol";
-import "./interfaces/IWETH.sol";
+import "./BondedGovToken.sol";
+import "../interfaces/ICERC20.sol";
+import "../interfaces/IWETH.sol";
 
-contract PooledLPWithBorrowToken is BondedGovToken {
+contract PooledLPToken is BondedGovToken {
     using SafeMath for uint256;
 
     address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address private constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    address private constant CETH = 0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5;
 
     IERC20 public reserveToken;
     ICERC20 public cReserveToken;
     bool public activated;
     uint256 public totalDepositedReserve;
+    mapping(address => bool) treasurers;
 
     constructor(
         string _name,
@@ -34,10 +34,10 @@ contract PooledLPWithBorrowToken is BondedGovToken {
 
     function () public payable {}
 
-    // Must be called after contract creationt for bonded token to become operational
-    function activate(address _treasury) public onlyOwner {
-        if (_treasury != address(0)) {
-            transferOwnership(_treasury);
+    // Must be called after contract creation for bonded token to become operational
+    function activate(address _newOwner) public onlyOwner {
+        if (_newOwner != address(0)) {
+            transferOwnership(_newOwner);
         }
         require(reserveToken.transferFrom(msg.sender, address(this), totalDepositedReserve), "activate() ERC20.transferFrom failed.");
         require(reserveToken.approve(address(cReserveToken), totalDepositedReserve), "activate() ERC20.approve failed.");
@@ -60,53 +60,43 @@ contract PooledLPWithBorrowToken is BondedGovToken {
         require(cReserveToken.redeemUnderlying(returnAmount) == 0, "burn() cERC20.redeemUnderlying failed.");
         require(reserveToken.transfer(msg.sender, returnAmount), "burn() ERC20.transfer failed.");
         totalDepositedReserve = totalDepositedReserve.sub(returnAmount);
-        (, bool isSolvent) = reserveDifferential();
-        require(isSolvent, "burn() burn locked when insolvent.");
     }
 
-    function withdrawInterest(uint256 _amount) public onlyOwner {
+    function whitelistTreasurer(address newTreasurer) public onlyOwner {
+        require(!treasurers[newTreasurer], "treasurer already whitelisted");
+        treasurers[newTreasurer] = true;
+    }
+
+    function blacklistTreasurer(address treasurer) public {
+        require(treasurers[treasurer], "target is not a treasurer");
+        require(treasurers[msg.sender] || msg.sender == owner(), "only treasurers or owner can blacklist");
+        treasurers[treasurer] = false;
+    }
+
+    function withdrawInterest(uint256 _amount) public {
+        require(treasurers[msg.sender] || msg.sender == owner(), "only treasurers or owner can withdraw interest");
+        uint256 interest = reserveDifferential();
+        require(interest >= _amount, "withdrawInterest() interest accrued is below withdraw amount");
         require(cReserveToken.redeemUnderlying(_amount) == 0, "withdrawInterest() cERC20.redeemUnderlying failed.");
         require(reserveToken.transfer(msg.sender, _amount), "withdrawInterest() ERC20.transfer failed.");
-        (, bool isSolvent) = reserveDifferential();
-        require(isSolvent, "withdrawInterest() locked when insolvent.");
     }
 
-    function withdrawToken(address _tokenAddress, uint256 _amount) public onlyOwner {
+    function withdrawToken(address _tokenAddress, uint256 _amount) public {
+        require(treasurers[msg.sender] || msg.sender == owner(), "only treasurers or owner can withdraw tokens");
         require(_tokenAddress != address(cReserveToken), "withdrawToken() cannot withdraw collateral token.");
         if (_tokenAddress == ETH) {
             require(address(this).balance >= _amount);
             IWETH(WETH).deposit.value(_amount)();
             _tokenAddress = WETH;
         }
-        require(IERC20(_tokenAddress).transfer(msg.sender, _amount), "withdrawToken() withdraw amount is larger than token balance.");
-    }
-
-    function borrowAsset(address _cTokenAddress, uint256 _amount) public onlyOwner {
-        require(ICERC20(_cTokenAddress).borrow(_amount) == 0, "borrowAsset() ICERC20.borrow failed.");
-    }
-
-    function repayBorrowedAsset(address _cTokenAddress, uint256 _amount) public onlyOwner {
-        if (_cTokenAddress == CETH) {
-            require(ICEther(_cTokenAddress).repayBorrow.value(_amount)() == 0, "repayBorrowAsset() ICEther.repayBorrow failed.");
-        } else {
-            require(ICERC20(_cTokenAddress).repayBorrow(_amount) == 0, "repayBorrowAsset() ICERC20.repayBorrow failed.");
-        }
+        require(IERC20(_tokenAddress).transfer(msg.sender, _amount), "withdrawToken() ERC20.transfer failed.");
     }
 
     function reserveBalance() public view returns (uint256) {
         return totalDepositedReserve;
     }
 
-    function reserveDifferential() public view returns (uint256 differential, bool isSolvent) {
-        uint256 underlyingBalance = cReserveToken.balanceOfUnderlying(address(this));
-        if (underlyingBalance >= totalDepositedReserve) {
-            return (underlyingBalance.sub(totalDepositedReserve), true);
-        }
-
-        return (totalDepositedReserve.sub(underlyingBalance), false);
-    }
-
-    function treasuryAddress() public view returns (address) {
-        return owner();
+    function reserveDifferential() public view returns (uint256) {
+        return cReserveToken.balanceOfUnderlying(address(this)).sub(totalDepositedReserve);
     }
 }

@@ -8,9 +8,9 @@ contract GovernorAlpha {
 
     string public name;
 
-    function minimumQuorum() public pure returns (uint) { return 1000000 ether; } // 1 million e18 tokens
+    function minimumQuorum() public pure returns (uint) { return 1000000 ether; } // 1 million 10^18 tokens
 
-    function minimumThreshold() public pure returns (uint) { return 100000 ether; } // 100k e18 tokens
+    function minimumThreshold() public pure returns (uint) { return 100000 ether; } // 100k 10^18 tokens
 
     function proposalMaxOperations() public pure returns (uint) { return 20; } // 20 actions
 

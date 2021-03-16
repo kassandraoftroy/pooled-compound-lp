@@ -24,5 +24,11 @@ module.exports = async (hre) => {
       ],
     });
 };
-
+module.exports.skip = async (hre) => {
+  const skip =
+    hre.network.name === "mainnet" ||
+    hre.network.name === "rinkeby" ||
+    hre.network.name === "ropsten"
+  return skip ? true : false;
+};
 module.exports.tags = ["PooledLPWithBorrowToken"];

@@ -3,7 +3,6 @@ require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-deploy");
 require("hardhat-deploy-ethers");
-require("solidity-coverage");
 
 // Libraries
 const assert = require("assert");
@@ -16,9 +15,9 @@ const ALCHEMY_ID = process.env.ALCHEMY_ID;
 assert.ok(ALCHEMY_ID, "no Alchemy ID in process.env");
 
 // @dev fill this out
-const DEPLOYER_MAINNET = "0xAabB54394E8dd61Dd70897E9c80be8de7C64A895";
+const DEPLOYER_MAINNET = "";
 const DEPLOYER_PK_MAINNET = process.env.DEPLOYER_PK_MAINNET;
-const DEPLOYER_RINKEBY = "0xAabB54394E8dd61Dd70897E9c80be8de7C64A895";
+const DEPLOYER_RINKEBY = "0x4B5BaD436CcA8df3bD39A095b84991fAc9A226F1";
 const DEPLOYER_PK_RINKEBY = process.env.DEPLOYER_PK_RINKEBY;
 
 const mainnetAddresses = {
@@ -33,7 +32,10 @@ const mainnetAddresses = {
   ethFaucetAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
 };
 
-const rinkebyAddresses = {};
+const rinkebyAddresses = {
+  cDaiAddress: '0x6D7F0754FFeb405d23C51CE938289d4835bE3b14',
+  daiAddress: '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa',
+};
 
 module.exports = {
   defaultNetwork: "hardhat",
